@@ -324,7 +324,7 @@ Explanation:
 -   &&:
 
     -   Ensures the next command runs only if the previous command is
-        > successful.
+         successful.
 
 -   terraform show -json plan.bin:
 
@@ -464,6 +464,9 @@ Explanation:
 - After the result is obtained, it will be evaluated against the condition that is defined in the `condition` key, which is `LessThanEqualTo` 30
 
 **input.json: Available on the input directory**
+
+Let's try to run the evaluation!
+
 ## Tirith on StackGuardian platform
 
 Time: 10 minutes
@@ -493,24 +496,23 @@ You will learn about:
 
 5.  Fill the values like the image below
 
-![](./image3.png){width="6.353089457567804in"
-height="4.802935258092738in"}
+![](./image3.png)
 
 Explanation
 
 -   We are using the "attribute" operation type, which will get the
-    > "attribute" of the instances of resource type that's defined in
-    > the "resource_type"
+     "attribute" of the instances of resource type that's defined in
+     the "resource_type"
 
     -   In this case, we are getting the values of the attribute "tags"
-        > in the "aws_eks_node_group" resource type
+         in the "aws_eks_node_group" resource type
 
 -   In the condition type, we are using Contains, which will make sure
-    > that the result of the provider contains the value defined in the
-    > "Condition value"
+     that the result of the provider contains the value defined in the
+     "Condition value"
 
     -   In this case, we are making sure that the output of the provider
-        > contains the string '{"costcenter....'
+         contains the string '{"costcenter....'
 
 ### Creating a workflow
 
@@ -532,42 +534,42 @@ Running the workflow
 ### Available Tirith Condition Types
 
 -   **ContainedIn**: Checks if the given value is contained within a
-    > specified list or collection.
+     specified list or collection.
 
 -   **Contains**: Checks if a specified list or collection contains the
-    > given value.
+     given value.
 
 -   **Equals**: Checks if the given value is equal to a specified value.
 
 -   **GreaterThanEqualTo**: Checks if the given value is greater than or
-    > equal to a specified value.
+     equal to a specified value.
 
 -   **GreaterThan**: Checks if the given value is greater than a
-    > specified value.
+     specified value.
 
 -   **IsEmpty**: Checks if the given value, list, or collection is
-    > empty.
+     empty.
 
 -   **IsNotEmpty**: Checks if the given value, list, or collection is
-    > not empty.
+     not empty.
 
 -   **LessThanEqualTo**: Checks if the given value is less than or equal
-    > to a specified value.
+     to a specified value.
 
 -   **LessThan**: Checks if the given value is less than a specified
-    > value.
+     value.
 
 -   **RegexMatch**: Checks if the given value matches a specified
-    > regular expression pattern.
+     regular expression pattern.
 
 -   **NotEquals**: Checks if the given value is not equal to a specified
-    > value.
+     value.
 
 -   **NotContainedIn**: Checks if the given value is not contained
-    > within a specified list or collection.
+     within a specified list or collection.
 
 -   **NotContains**: Checks if a specified list or collection does not
-    > contain the given value.
+     contain the given value.
 
 ### Available Tirith Providers and its operation types
 
