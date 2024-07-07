@@ -12,8 +12,9 @@ Time: 1 - 2 hours
 -   Use Case: Guardrailing cloud cost
 -   Tirith on StackGuardian platform
 
-Purpose:
--   Be able to understand and advocate Tirith
+
+## Expected outcome:
+-   Be able to understand and advocate for Tirith
 -   Be able to contribute to Tirith Roadmap
 
 ## Introduction to Tirith
@@ -23,15 +24,13 @@ Time: 15 minutes
 In this section, you will learn about:
 
 -   What Tirith is about
-
 -   Why are we doing Tirith
-
 -   Philosophy of Tirith
 
 ### What is Tirith?
 
 -   Tirith scans declarative Infrastructure as Code (IaC) configurations like Terraform against policies defined using JSON.
--   Tirith is a **declarative** policy engine, not imperative.
+-   Tirith is a **declarative** policy engine, not imperative. So it is decoupled.
 -   Currently, the focus is more to be a **proactive** policy evaluator than **reactive**.
 -   It is a CLI-based program, but can also be used as a Python library
 
@@ -42,16 +41,16 @@ In this section, you will learn about:
 -   Even with current engines there are still manual approvals needed
     ending up in ticketing systems
 -   Hardcoded IaC, you need several code bases
--   Policies are not going beyond resources configuration! Why not going 
+-   Policies are not going beyond resources configuration! Why not going
     to cost or even CI/CD definitions?
 
-[TODO: Add more explanations and Terraform examples]{.mark}
-
-Imagine that in an organisation, you have an IaC codebase and you want
+Imagine that in an organisation, you have a lot of IaC codebases and you want
 to ensure that every **aws_lambda_function** inside the codebase has
-memory set to 128 or even lower than 128.
+memory set to 128 or even lower than 128. With one same Tirith policy, we can do evaluations on any IaC codebases.
 
 ### Philosophy of Tirith
+
+The name is from Minas Tirith, some kind of fort or castle in the Lord of the Rings. The idea is that Tirith is a fort that guards your infrastructure.
 
 To run Tirith, the user has to provide two files: the input, and the
 policy. Tirith will then evaluate the policy against the input, and then
@@ -71,7 +70,6 @@ Internally, more or less, Tirith works like this:
 Example of a Tirith policy to make sure that:
 
 -   AWS VPC instance_tenancy is \"default\"
-
 -   EC2 instance cannot be destroyed
 ```json
 {
@@ -106,7 +104,6 @@ Example of a Tirith policy to make sure that:
   ],
   "eval_expression": "check_ec2_tenancy && !destroy_ec2"
 }
-
 ```
 
 1.  When input and policy file goes into Tirith, Tirith will use the
@@ -133,12 +130,11 @@ In this section, we will take a look on how we can use Tirith to
 guardrail a JSON input.
 
 You will learn about:
-
 -   Tirith CLI command to evaluate a policy against an input
-
 -   Tirith JSON provider
-
 -   Tirith error tolerance
+
+Here, we will create a simple authorization example with Tirith JSON provider.
 
 ### Preparation
 
@@ -219,21 +215,16 @@ tirith -input-path input.json -policy-path policy.json
 Explanation:
 
 -   **tirith**:
-
     -   This is the command to run the Tirith program, which is part of
          the StackGuardian Policy Framework.
 
 -   **-input-path input.json**:
-
     -   The -input-path option specifies the path to the input file.
-
     -   input.json is the file that contains the input data to be
          scanned by Tirith.
 
 -   **-policy-path policy.json**:
-
     -   The -policy-path option specifies the path to the policy file.
-
     -   policy.json is the file that contains the policies (rules)
          defined in Tirith\'s policy as code.
 
@@ -286,6 +277,8 @@ By setting the **error_tolerance** value to 2 or more inside the
 **condition** key in the evaluator, it will mark the evaluator as
 Skipped instead of Failed.
 
+Let's try to add a `error_tolerance` on the first evaluator and then rerun the evaluation to see what will happen.
+
 ## Use Case: Guardrailing Terraform deployment
 
 Time: 10 minutes
@@ -294,9 +287,7 @@ In this section, we will take a look on how we can use Tirith to
 guardrail a Terraform deployment to make sure that S3 is private.
 
 You will learn about:
-
 -   A little bit about terraform plan file
-
 -   `stackguardian/terraform_plan` provider (real capability of a
      provider)
 
@@ -307,7 +298,7 @@ first to see what are the changes that will be made when we do
 "terraform apply". So it's like "dry-run" only to see whether the
 changes are aligned to what we expect or not.
 
-In essence, we can generate a terraform plan file by using the following
+We can generate a terraform plan file by using the following
 command:
 
 ```sh
@@ -318,24 +309,19 @@ terraform plan -out plan.bin && terraform show -json plan.bin | jq > plan.json
 Explanation:
 
 -   terraform plan -out plan.bin:
-
     -   Creates an execution plan and saves it to plan.bin.
 
 -   &&:
-
     -   Ensures the next command runs only if the previous command is
          successful.
 
 -   terraform show -json plan.bin:
-
     -   Converts the execution plan in plan.bin to JSON format.
 
 -   \| jq:
-
     -   Processes and pretty-prints the JSON output.
 
 -   \> plan.json:
-
     -   Redirects the output to a file named plan.json.
 
 The generated plan.json file contains information about what plan will
@@ -394,7 +380,7 @@ Explanation:
 
     -   The result of this operation type is boolean
 
-**input.json: Available on the workshop repo**
+**input.json: Available on the inputs directory**
 
 Let's try to run the evaluation!
 
@@ -402,21 +388,18 @@ Let's try to run the evaluation!
 
 Time: 10 minutes
 
-In this section, we will take a look on how we can use Tirith to make
-sure that aws_s3_instance usage per month is lower than 300 USD.
+In this section, we will take a look on how we can use Tirith to guardrail cost usage by using `stackguardian/infracost` provider.
+For example, we can make sure that the usage per month of `aws_redshit_cluster` does not exceed 30 USD.
 
 You will learn about:
-
 -   A little bit about the infracost json file
-
 -   Tirith Infracost provider
 
 ### Infracost JSON file
 
 Infracost is a tool that can predict cost from a Terraform
-configuration. This tool has an option to get the JSON output by using
-the ... command. We can then use the JSON file resulting from the
-infracost tool as an input for stackguardian/infracost provider.
+IaC codebase. This tool has an option to get the JSON output. We can then use the JSON file resulting from the
+Infracost tool as an input for stackguardian/infracost provider.
 
 The structure of the JSON file can be found here:
 [https://www.infracost.io/docs/features/json_output_format/](https://www.infracost.io/docs/features/json_output_format/)
@@ -429,8 +412,8 @@ to extract the information about total monthly cost and total hourly
 cost from the JSON output without writing a single code. More details
 are available in the appendix section.
 
-Let\'s use the infracost provider to make sure that aws S3 usages per
-month doesn\'t exceed 30 USD.
+Let's use the infracost provider to make sure that the usage per
+month of a Terraform code base does not exceed 30 USD.
 
 Here is the policy for doing that:
 ```json
@@ -448,11 +431,11 @@ Here is the policy for doing that:
                 "resource_type": [
                     "*"
                 ]
-            }
+            },
             "condition": {
                 "type": "LessThanEqualTo",
                 "value": 30
-            },
+            }
         }
     ],
     "eval_expression": "monthly_cost_below_30"
@@ -476,15 +459,30 @@ engine. For instance, a user can make a policy to make sure that monthly
 cost usage is lower than 100 USD, the policy then applied into a
 workflow, then when the user runs that workflow, it will evaluate first
 whether the policy is passing or failing, if it passes it will continue
-to run the workflow, otherwise it will not run the workflow
+to run the workflow, otherwise it will not run the workflow.
 
 You will learn about:
+-   Creating a Tirith policy with Terraform Plan provider with SG noCode interface
+-   Applying that policy into workflows in StackGuardian so that the policy will be evaluated before the workflow is executed
 
--   Creating a Tirith policy with Terraform Plan provider
+In this section, we will create a policy to make sure that a certain value is present in the tags of an AWS S3 bucket, then we will apply that policy into a workflow in StackGuardian Orchestrator.
 
--   Applying that policy into a workflow
+### Creating a workflow
+
+Let\'s create a workflow that creates EKS node group by using a
+template available in the marketplace:
+
+1. Create a workflow group
+
+2. In that workflow group, create a workflow by using Wizard -> Terraform
+
+3.  Use the `aws-s3-demo-website` template from the marketplace
+
+4.  Fill the remaining fields, connector, etc.
 
 ### Creating a Tirith policy to Guardrail aws_eks_node_group's tags
+
+Here we will create a Tirith Policy using SG NoCode interface and then apply that policy into the workflow that we have created before.
 
 1.  Go into the **Policies** section in the Orchestrator
 
@@ -492,10 +490,11 @@ You will learn about:
 
 3.  Fill the resource name with a descriptive name
 
-4.  Click on Settings \> Rules \> Add New Policy Rule
+4.  On the left hand side, click on the `Rules` section, then `Add New Policy Rule`
 
 5.  Fill the values like the image below
-
+![](./image4.png)
+After that, select on the `SG noCode`, and fill the values like the image below
 ![](./image3.png)
 
 Explanation
@@ -503,31 +502,28 @@ Explanation
 -   We are using the "attribute" operation type, which will get the
      "attribute" of the instances of resource type that's defined in
      the "resource_type"
-
     -   In this case, we are getting the values of the attribute "tags"
-         in the "aws_eks_node_group" resource type
+         in the "aws_s3_bucket" resource type
 
 -   In the condition type, we are using Contains, which will make sure
      that the result of the provider contains the value defined in the
      "Condition value"
-
     -   In this case, we are making sure that the output of the provider
-         contains the string '{"costcenter....'
+         contains the tag "Owner" with the value "something"
 
-### Creating a workflow
+6. On the left hand side, select the **Meta** section
+7. On the **Policy Enforcement** section, click **Choose** and then select the Workflow Group/Workflow that you want to apply the policy to
+8. Save the policy
 
-Let\'s try a dummy workflow that creates EKS node group by using a
-template available in the marketplace:
+### Running the workflow
 
-1.  Create a workflow
+In this section, we are going to run the previous workflow that we have created and see the result of the policy evaluation.
 
-2.  Select the aws eks node group template
+1. Go back to the previous workflow that we have created, and click on the **Run** button on the left hand side, and do **Quick Run** with the action `create`
 
-3.  Fill the fields
-
-### Applying the policy into a workflow
-
-Running the workflow
+2. After the workflow is executed, go to the **Compliance Checks** tab, and see the result of the policy evaluation
+![](./image5.png)
+Or you can also see it in the logs of the workflow run
 
 ## Appendix
 
