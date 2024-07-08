@@ -145,7 +145,7 @@ policy.json.
 
 ```json
 {
-  "pathName": "/stackguardian/wfgrps/test",
+  "path": "/stackguardian/wfgrps/test",
   "verb": "POST",
   "meta": {
     "epoch": 1718860398,
